@@ -2,6 +2,7 @@
 
 import { ArrowUp, Github, Linkedin, Twitter, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 const footerLinks = {
   Programs: ["Full-Stack Development", "Data Science", "DevOps", "Cybersecurity", "AI/ML"],
@@ -26,13 +27,9 @@ export function Footer() {
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
-          {/* Logo & Newsletter */}
           <div className="col-span-2">
             <a href="#" className="inline-block mb-6">
-              <span className="text-2xl font-bold font-mono text-primary text-glow">
-                {"<"}byte<span className="text-foreground">Tek</span>
-                {"/>"}
-              </span>
+              <Image src="/bytetek-logo.svg" alt="byteTek Logo" width={50} height={50} className="h-12 w-auto" />
             </a>
             <p className="text-muted-foreground mb-6">
               Building tech skills byte by byte. Transform your career with cutting-edge technology education.

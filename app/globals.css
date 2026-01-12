@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Dark futuristic theme for byteTek with neon cyan accents */
+/* Dark futuristic theme for byteTek with black/white/grey accents */
 :root {
   --background: oklch(0.08 0 0);
   --foreground: oklch(0.98 0 0);
@@ -11,35 +11,37 @@
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.1 0 0);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.75 0.18 195);
+  /* Updated primary to white/light grey instead of cyan */
+  --primary: oklch(0.95 0 0);
   --primary-foreground: oklch(0.08 0 0);
   --secondary: oklch(0.18 0 0);
   --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.2 0 0);
   --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.65 0.2 150);
-  --accent-foreground: oklch(0.08 0 0);
+  /* Updated accent to dark grey instead of cyan */
+  --accent: oklch(0.25 0 0);
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.25 0 0);
   --input: oklch(0.2 0 0);
-  --ring: oklch(0.75 0.18 195);
-  --chart-1: oklch(0.75 0.18 195);
-  --chart-2: oklch(0.65 0.2 150);
+  --ring: oklch(0.95 0 0);
+  --chart-1: oklch(0.95 0 0);
+  --chart-2: oklch(0.25 0 0);
   --chart-3: oklch(0.6 0.15 280);
   --chart-4: oklch(0.7 0.15 60);
   --chart-5: oklch(0.65 0.2 330);
   --radius: 0.625rem;
   --sidebar: oklch(0.1 0 0);
   --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.75 0.18 195);
+  --sidebar-primary: oklch(0.95 0 0);
   --sidebar-primary-foreground: oklch(0.08 0 0);
   --sidebar-accent: oklch(0.18 0 0);
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.25 0 0);
-  --sidebar-ring: oklch(0.75 0.18 195);
-  /* Add Opay green color */
-  --opay-green: oklch(0.6 0.15 160);
+  --sidebar-ring: oklch(0.95 0 0);
+  /* Updated Opay green to grey */
+  --opay-green: oklch(0.3 0 0);
 }
 
 @theme inline {
@@ -107,10 +109,11 @@
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(0, 255, 200, 0.3);
+    /* Updated glow shadow to white instead of cyan */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(0, 255, 200, 0.6);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -202,16 +205,18 @@
   animation: scan-line 8s linear infinite;
 }
 
+/* Updated text glow to white instead of cyan */
 .text-glow {
-  text-shadow: 0 0 10px rgba(0, 255, 200, 0.5), 0 0 20px rgba(0, 255, 200, 0.3);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
+/* Updated box glow to white instead of cyan */
 .box-glow {
-  box-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
 }
 
 .gradient-border {
   background: linear-gradient(var(--background), var(--background)) padding-box,
-    linear-gradient(135deg, rgba(0, 255, 200, 0.5), rgba(0, 200, 100, 0.5)) border-box;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(200, 200, 200, 0.3)) border-box;
   border: 1px solid transparent;
 }

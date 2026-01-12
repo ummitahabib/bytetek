@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Calendar, Users, TrendingUp } from "lucide-react"
+import { Calendar, Users, TrendingUp, MapPin, Phone, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { RegisterButton } from "@/components/register-button"
+import { CLASS_INFO } from "@/lib/programs-data"
 
 export function BootcampSection() {
   const [timeLeft, setTimeLeft] = useState({
@@ -73,33 +74,17 @@ export function BootcampSection() {
   ]
 
   return (
-    <section id="bootcamp" className="py-24 relative overflow-hidden">
-      {/* Background Circuit Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="circuit" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-              <path d="M10 10h80v80H10z" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              <circle cx="10" cy="10" r="2" fill="currentColor" />
-              <circle cx="90" cy="10" r="2" fill="currentColor" />
-              <circle cx="10" cy="90" r="2" fill="currentColor" />
-              <circle cx="90" cy="90" r="2" fill="currentColor" />
-              <circle cx="50" cy="50" r="3" fill="currentColor" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#circuit)" className="text-primary" />
-        </svg>
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
+    <section
+      id="bootcamp"
+      className="py-24 bg-white dark:bg-black border-t border-b border-gray-300 dark:border-gray-700"
+    >
+      <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="text-primary font-mono text-sm tracking-wider uppercase">{"// Next Cohort"}</span>
-          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 text-balance">
-            Intensive <span className="text-primary text-glow">Bootcamp</span>
-          </h2>
+          <span className="font-mono text-sm tracking-wider uppercase text-muted-foreground">{"// Quick Info"}</span>
+          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 text-balance">Get Started Today</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            16-week immersive program. Transform from beginner to job-ready developer.
+            Join ByteTek&apos;s intensive 3-month programs and accelerate your tech career.
           </p>
         </div>
 
@@ -151,7 +136,7 @@ export function BootcampSection() {
         </div>
 
         {/* Capacity Meter */}
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-2xl mx-auto text-center mb-16">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-muted-foreground">Spots Remaining</span>
             <span className="text-sm font-mono text-primary">12 / 30</span>
@@ -178,6 +163,52 @@ export function BootcampSection() {
           >
             Reserve Your Spot
           </RegisterButton>
+        </div>
+
+        {/* Location & Contact Highlight */}
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="p-6 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-center">
+              <MapPin className="w-8 h-8 mx-auto mb-3 text-black dark:text-white" />
+              <div className="font-semibold mb-2">Visit Us</div>
+              <div className="text-sm text-muted-foreground">{CLASS_INFO.physical.location}</div>
+            </div>
+
+            <div className="p-6 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-center">
+              <Phone className="w-8 h-8 mx-auto mb-3 text-black dark:text-white" />
+              <div className="font-semibold mb-2">Call Us</div>
+              <a href={`tel:${CLASS_INFO.physical.phone}`} className="text-sm hover:underline">
+                {CLASS_INFO.physical.phone}
+              </a>
+            </div>
+
+            <div className="p-6 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-center">
+              <Mail className="w-8 h-8 mx-auto mb-3 text-black dark:text-white" />
+              <div className="font-semibold mb-2">Email Us</div>
+              <a href={`mailto:${CLASS_INFO.contact.email}`} className="text-sm hover:underline">
+                {CLASS_INFO.contact.email}
+              </a>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <RegisterButton
+              size="lg"
+              program={{
+                id: "bytetek-programs",
+                name: "ByteTek Training Programs",
+                type: "bootcamp",
+                price: 65000,
+                duration: "3 Months",
+                description: "Intensive tech training for kids, teens, and professionals",
+                startDates: ["2026-02-01", "2026-03-15", "2026-05-01"],
+              }}
+              className="px-8 py-3 font-semibold"
+            >
+              Start Your Journey
+            </RegisterButton>
+          </div>
         </div>
       </div>
     </section>

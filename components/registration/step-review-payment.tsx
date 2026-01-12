@@ -7,18 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
-import {
-  ChevronLeft,
-  Lock,
-  ShieldCheck,
-  CreditCard,
-  Wallet,
-  Building,
-  Tag,
-  Check,
-  AlertCircle,
-  Loader2,
-} from "lucide-react"
+import { ChevronLeft, Lock, ShieldCheck, CreditCard, Tag, Check, AlertCircle, Loader2 } from "lucide-react"
 
 const validPromoCodes: Record<string, number> = {
   EARLYBIRD: 15,
@@ -69,7 +58,6 @@ export function StepReviewPayment() {
     // Simulate payment processing
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Generate payment reference
     const paymentRef = `BT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
 
     // Store payment data in sessionStorage for success page
@@ -91,6 +79,68 @@ export function StepReviewPayment() {
 
     // Navigate to success page
     window.location.href = "/registration-success"
+  }
+
+  const handlePayWithMonify = async () => {
+    if (!data.agreedToTerms) {
+      setPaymentError("Please agree to the terms and conditions")
+      return
+    }
+
+    setIsProcessing(true)
+    setPaymentError("")
+
+    try {
+      const paymentRef = `BT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
+
+      const response = await fetch("/api/monify/initialize-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: finalPrice,
+          email: data.email,
+          fullName: data.fullName,
+          phone: data.phone,
+          program: selectedProgram?.name,
+          paymentRef,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        setPaymentError(error.error || "Failed to initialize payment")
+        setIsProcessing(false)
+        return
+      }
+
+      const paymentData = await response.json()
+
+      sessionStorage.setItem(
+        "bytetek_payment",
+        JSON.stringify({
+          ...data,
+          program: selectedProgram,
+          finalAmount: finalPrice,
+          paymentRef,
+          paymentDate: new Date().toISOString(),
+          reference: paymentData.reference,
+        }),
+      )
+
+      setIsProcessing(false)
+      setIsOpen(false)
+      resetData()
+
+      if (paymentData.authorizationUrl) {
+        window.location.href = paymentData.authorizationUrl
+      } else {
+        setPaymentError("Payment gateway URL not available")
+      }
+    } catch (error) {
+      console.error("[v0] Payment error:", error)
+      setPaymentError("An error occurred while processing your payment")
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -281,14 +331,33 @@ export function StepReviewPayment() {
         )}
       </Button>
 
+      {/* Monify Payment Button */}
+      <Button
+        onClick={handlePayWithMonify}
+        disabled={isProcessing}
+        className={cn(
+          "w-full h-14 text-lg font-semibold transition-all",
+          "bg-black hover:bg-gray-800 text-white border border-gray-700",
+          isProcessing && "opacity-80",
+        )}
+      >
+        {isProcessing ? (
+          <>
+            <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+            Processing Payment...
+          </>
+        ) : (
+          <>
+            <Lock className="mr-2 w-5 h-5" />
+            Pay {formatPrice(finalPrice)} with Monify
+          </>
+        )}
+      </Button>
+
       {/* Payment Methods */}
       <div className="flex items-center justify-center gap-4 text-muted-foreground">
-        <span className="text-xs">Accepted:</span>
-        <div className="flex items-center gap-3">
-          <Wallet className="w-5 h-5" title="Opay Wallet" />
-          <CreditCard className="w-5 h-5" title="Debit/Credit Card" />
-          <Building className="w-5 h-5" title="Bank Transfer" />
-        </div>
+        <span className="text-xs">Secured by:</span>
+        <div className="text-xs">Monify by Monypoint</div>
       </div>
 
       {/* Back Button */}

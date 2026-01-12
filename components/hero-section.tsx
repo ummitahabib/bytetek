@@ -49,13 +49,10 @@ export function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
-        {/* Logo Animation */}
         <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-mono tracking-tight">
-            <span className="text-primary text-glow animate-glitch inline-block">{"<"}</span>
             <span className="text-foreground">byte</span>
-            <span className="text-primary text-glow">Tek</span>
-            <span className="text-primary text-glow animate-glitch inline-block">{"/>"}</span>
+            <span className="text-primary">Tek</span>
           </h1>
         </div>
 

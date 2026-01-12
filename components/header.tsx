@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -33,14 +34,8 @@ export function Header() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
           <a href="#" className="flex items-center gap-2 group">
-            <div className="relative">
-              <span className="text-2xl font-bold font-mono text-primary text-glow animate-glitch">
-                {"<"}byte<span className="text-foreground">Tek</span>
-                {"/>"}
-              </span>
-            </div>
+            <Image src="/bytetek-logo.svg" alt="byteTek Logo" width={40} height={40} className="h-10 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
