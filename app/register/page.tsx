@@ -275,7 +275,7 @@ import { useState } from "react"
 import { ArrowRight, Check, AlertCircle } from "lucide-react"
 import Image from "next/image"
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://n8n.srv1240013.hstgr.cloud/webhook-test/student-registration"
+const WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://n8n.srv1240013.hstgr.cloud/webhook/student-registration"
 
 export default function N8nRegistrationPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
