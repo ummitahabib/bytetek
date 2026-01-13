@@ -12,7 +12,7 @@ const technologies = [
   { name: "Kubernetes", category: "DevOps" },
   { name: "PostgreSQL", category: "Database" },
   { name: "MongoDB", category: "Database" },
-  { name: "TensorFlow", category: "AI/ML" },
+  { name: "TensorFlow", category: "AI for Creatives" },
   { name: "GraphQL", category: "API" },
   { name: "Redis", category: "Cache" },
   { name: "Git", category: "Tools" },

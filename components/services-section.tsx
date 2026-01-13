@@ -25,7 +25,7 @@ const services = [
   },
   {
     icon: Brain,
-    title: "AI/ML Services",
+    title: "AI for Creatives Services",
     description: "Harness the power of artificial intelligence and machine learning for your business.",
     features: ["Model Development", "Data Analytics", "NLP Solutions", "Computer Vision"],
   },

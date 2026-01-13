@@ -147,7 +147,7 @@ export default function N8nRegistrationPage() {
           ))}
 
           {[
-            { name: "courseOfStudy", label: "Course of Study", options: ["Web Development","Mobile Development","Data Science","Cybersecurity","Cloud Computing","AI/ML"] },
+            { name: "courseOfStudy", label: "Course of Study", options: ["Web Development","Mobile Development","Data Science","Cybersecurity","Cloud Computing","AI for Creatives"] },
             { name: "trainingFormat", label: "Training Format", options: ["Virtual","Physical","Hybrid"] },
           ].map((field) => (
             <div key={field.name}>
