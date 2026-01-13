@@ -151,7 +151,7 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <a href="#" className="flex items-center gap-2 group">
-            <Image src="/bytetek-logo.png" alt="byteTek Logo" width={40} height={40} className="h-10 w-auto" />
+            <Image src="/bytetek-logo.svg" alt="byteTek Logo" width={40} height={40} className="h-10 w-auto" />
           </a>
 
           {/* Desktop Navigation */}

@@ -365,9 +365,9 @@ export default function N8nRegistrationPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Image src="/bytetek-logo.png" alt="byteTek" width={50} height={50} className="h-12 w-auto" />
+            <Image src="/bytetek-logo.svg" alt="byteTek" width={50} height={50} className="h-12 w-auto" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Join byteTek</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Build Your Tech Skills Byte by Byte</h1>
           <p className="text-muted-foreground">Start your tech journey with us</p>
         </div>
 
