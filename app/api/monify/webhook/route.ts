@@ -21,28 +21,44 @@ export async function POST(request: NextRequest) {
     }
 
     const data = JSON.parse(body)
-    const eventType = data.event_type || data.type
-    const transactionStatus = data.data?.status || data.status
+    const eventType = data.event || data.event_type || data.type
+    const transactionData = data.data || data
 
-    if (eventType === "transaction.successful" || transactionStatus === "success") {
-      console.log("[v0] Payment successful webhook:", {
-        reference: data.data?.reference || data.reference,
-        amount: data.data?.amount || data.amount,
-        customer: data.data?.customer || data.customer,
+    if (eventType === "transaction.completed" || eventType === "transaction.successful") {
+      console.log("[v0] Transaction completed webhook:", {
+        reference: transactionData.reference || transactionData.transactionReference,
+        amount: transactionData.amount,
+        status: transactionData.status,
       })
-
-      // TODO: Store payment record in your database
-      // TODO: Send enrollment confirmation email to customer
+      // TODO: Store payment record in database
+      // TODO: Send enrollment confirmation email
       // TODO: Update enrollment status to active
-    } else if (eventType === "transaction.failed" || transactionStatus === "failed") {
-      console.log("[v0] Payment failed webhook:", data.data?.reference || data.reference)
+    } else if (eventType === "transaction.failed") {
+      console.log("[v0] Transaction failed webhook:", transactionData.reference || transactionData.transactionReference)
       // TODO: Send payment failure notification
-    } else if (eventType === "refund.successful" || eventType === "refund.completed") {
-      console.log("[v0] Refund processed webhook:", data.data?.reference || data.reference)
+    } else if (eventType === "refund.completed" || eventType === "refund.successful") {
+      console.log("[v0] Refund completed webhook:", transactionData.reference || transactionData.transactionReference)
       // TODO: Process refund and update enrollment records
-    } else if (eventType === "disbursement.successful" || eventType === "disbursement.completed") {
-      console.log("[v0] Disbursement webhook:", data.data?.reference || data.reference)
-      // TODO: Handle disbursement for payouts if needed
+    } else if (eventType === "disbursement.completed" || eventType === "disbursement.successful") {
+      console.log(
+        "[v0] Disbursement completed webhook:",
+        transactionData.reference || transactionData.transactionReference,
+      )
+      // TODO: Handle disbursement for settlements
+    } else if (eventType === "settlement.completed") {
+      console.log("[v0] Settlement completed webhook:", transactionData)
+      // TODO: Record settlement transaction
+    } else if (eventType === "mandate.created" || eventType === "mandate.updated") {
+      console.log("[v0] Mandate webhook:", transactionData)
+      // TODO: Track mandate for recurring payments
+    } else if (eventType === "wallet.activity") {
+      console.log("[v0] Wallet activity webhook:", transactionData)
+      // TODO: Log wallet activities
+    } else if (eventType === "wallet.lowBalance") {
+      console.log("[v0] Low balance notification:", transactionData)
+      // TODO: Alert on low wallet balance
+    } else {
+      console.log("[v0] Unknown webhook event:", eventType, transactionData)
     }
 
     return NextResponse.json({ success: true })

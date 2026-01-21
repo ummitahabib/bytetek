@@ -20,9 +20,8 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${baseUrl}/api/v1/transactions/verify/${reference}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "X-Merchant-Id": merchantId,
-        "X-Contract-Code": contractCode,
+        "Content-Type": "application/json",
+        "X-Api-Key": apiKey,
       },
     })
 

@@ -7,6 +7,8 @@ interface PaymentInitRequest {
   phone: string
   program: string
   paymentRef: string
+  paymentType: "full" | "installment"
+  totalAmount: number
 }
 
 export async function POST(request: NextRequest) {
@@ -23,46 +25,95 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.MONIFY_API_BASE_URL
 
     if (!merchantId || !apiKey || !baseUrl || !contractCode) {
-      console.error("[v0] Monify credentials not configured")
+      console.error("[v0] Monify credentials not configured:", {
+        hasMerchantId: !!merchantId,
+        hasApiKey: !!apiKey,
+        hasBaseUrl: !!baseUrl,
+        hasContractCode: !!contractCode,
+      })
       return NextResponse.json(
-        { error: "Payment service not properly configured. Please contact support." },
+        { error: "Payment service configuration incomplete. Please check environment variables." },
         { status: 500 },
       )
     }
 
+    if (
+      merchantId === "YOUR_WALLET_ACCOUNT_NUMBER_HERE" ||
+      apiKey === "YOUR_API_KEY_HERE" ||
+      baseUrl === "YOUR_BASE_URL_HERE" ||
+      contractCode === "YOUR_CONTRACT_CODE_HERE"
+    ) {
+      return NextResponse.json(
+        {
+          error: "Payment credentials not configured. Please update .env.local with your actual Monify credentials.",
+        },
+        { status: 500 },
+      )
+    }
+
+    const paymentDescription =
+      body.paymentType === "installment"
+        ? `ByteTek ${body.program} - Installment 1 of 3`
+        : `ByteTek ${body.program} - Full Payment`
+
     const paymentPayload = {
       amount: Math.round(body.amount * 100), // Convert to kobo (NGN smallest unit)
       currency: "NGN",
-      merchantId,
+      walletAccountNumber: merchantId,
       contractCode,
       customer: {
         name: body.fullName,
         email: body.email,
-        phone: body.phone,
+        phoneNumber: body.phone,
       },
-      description: `ByteTek ${body.program} Enrollment`,
+      description: paymentDescription,
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/monify/webhook`,
       redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/registration-success`,
       metadata: {
         program: body.program,
         paymentRef: body.paymentRef,
+        paymentType: body.paymentType,
+        currentAmount: body.amount,
+        totalAmount: body.totalAmount,
+        installmentNumber: body.paymentType === "installment" ? 1 : 0,
       },
     }
+
+    console.log("[v0] Initializing Monify payment with payload:", paymentPayload)
 
     const response = await fetch(`${baseUrl}/api/v1/transactions/initialize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "X-Merchant-Id": merchantId,
-        "X-Contract-Code": contractCode,
+        "X-Api-Key": apiKey,
       },
       body: JSON.stringify(paymentPayload),
     })
 
+    const contentType = response.headers.get("content-type")
     if (!response.ok) {
-      const error = await response.text()
-      console.error("[v0] Monify API error:", error)
-      return NextResponse.json({ error: "Failed to initialize payment" }, { status: response.status })
+      let errorMessage = "Failed to initialize payment"
+
+      if (contentType?.includes("application/json")) {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } else {
+        const errorText = await response.text()
+        console.error("[v0] Monify returned non-JSON error:", {
+          status: response.status,
+          statusText: response.statusText,
+          preview: errorText.substring(0, 200),
+        })
+        errorMessage = `API Error: ${response.status} ${response.statusText}`
+      }
+
+      return NextResponse.json({ error: errorMessage }, { status: response.status })
+    }
+
+    if (!contentType?.includes("application/json")) {
+      console.error("[v0] Monify returned non-JSON response:", contentType)
+      return NextResponse.json({ error: "Invalid response from payment service" }, { status: 500 })
     }
 
     const data = await response.json()

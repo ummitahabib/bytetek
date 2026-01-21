@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 const footerLinks = {
-  Programs: ["Full-Stack Development", "Data Science", "DevOps", "Cybersecurity", "AI for Creatives"],
+  Programs: ["Full-Stack Development", "Data Science", "DevOps", "Cybersecurity", "AI/ML"],
   Company: ["About Us", "Careers", "Blog", "Press", "Partners"],
   Resources: ["Documentation", "Community", "Support", "FAQs", "Contact"],
   Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy", "Accessibility"],

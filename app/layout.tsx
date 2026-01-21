@@ -21,12 +21,11 @@ export const metadata: Metadata = {
     "AI",
     "machine learning",
   ],
-  generator: "v0.app",
-
-  // ✅ ADD THIS PART
-  other: {
+    generator: 'v0.app',
+      other: {
     "facebook-domain-verification": "a6447vqd9xohqe97uc1rqg2ytpyb49",
   },
+    
 }
 
 export const viewport: Viewport = {
@@ -35,11 +34,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <script type="text/javascript" src="https://sdk.monnify.com/plugin/monnify.js"></script>
+      </head>
       <body className={`font-sans antialiased ${_inter.variable} ${_jetbrainsMono.variable}`}>
         <RegistrationProvider>{children}</RegistrationProvider>
         <Analytics />
@@ -47,6 +49,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-
-
