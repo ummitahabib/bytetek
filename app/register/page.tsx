@@ -44,9 +44,9 @@ const getInstallmentDates = () => {
 
 // Bank account details - UPDATE THESE WITH YOUR ACTUAL DETAILS
 const BANK_DETAILS = {
-  bankName: "Your Bank Name",
+  bankName: "Monie Point",
   accountName: "ByteTek Limited",
-  accountNumber: "0123456789",
+  accountNumber: "7064686613",
 }
 
 export default function RegisterPage() {
