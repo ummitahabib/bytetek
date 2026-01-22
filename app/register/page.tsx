@@ -506,11 +506,11 @@ export default function RegisterPage() {
             })} */}
 {paymentType === "full" ? (
   // Show ONLY ONE item with total amount
-  <div>Full Payment - ₦{installments.total}</div>
+  <div>Full Payment - ₦{installments.total.toLocaleString()}</div>
 ) : (
   // Show ALL THREE installments
   installmentDates.map((date, idx) => {
-    const amount = idx === 2 ? installments.final : installments.monthly
+    const amount = idx === 2 ? installments.final.toLocaleString() : installments.monthly.toLocaleString()
     return <div>Installment {idx + 1} - ₦{amount}</div>
   })
 )}
