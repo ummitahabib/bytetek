@@ -21,7 +21,6 @@ export const metadata: Metadata = {
     "AI",
     "machine learning",
   ],
-    generator: 'v0.app',
       other: {
     "facebook-domain-verification": "a6447vqd9xohqe97uc1rqg2ytpyb49",
   },

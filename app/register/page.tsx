@@ -119,7 +119,7 @@ export default function RegisterPage() {
     try {
       // Submit form data to n8n webhook
       const n8nWebhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
-      
+
       if (n8nWebhookUrl) {
         const installments = calculateInstallments(courseDetails.price)
         const paymentAmount = paymentType === "full" ? installments.total : installments.monthly
@@ -237,7 +237,7 @@ export default function RegisterPage() {
           {/* Bank Account Details */}
           <div className="bg-card border border-border rounded-lg p-6 mb-6">
             <h2 className="text-lg font-semibold text-foreground mb-4">Bank Transfer Details</h2>
-            
+
             <div className="space-y-4">
               {/* Bank Name */}
               <div className="flex items-center justify-between p-4 bg-accent/5 rounded-lg">
@@ -414,9 +414,8 @@ export default function RegisterPage() {
             {/* Full Payment Option */}
             <button
               onClick={() => setPaymentType("full")}
-              className={`p-6 rounded-lg border-2 transition-all text-left ${
-                paymentType === "full" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
-              }`}
+              className={`p-6 rounded-lg border-2 transition-all text-left ${paymentType === "full" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
+                }`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -424,9 +423,8 @@ export default function RegisterPage() {
                   <p className="text-sm text-muted-foreground mt-1">Pay in one installment</p>
                 </div>
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    paymentType === "full" ? "border-primary bg-primary" : "border-border"
-                  }`}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentType === "full" ? "border-primary bg-primary" : "border-border"
+                    }`}
                 >
                   {paymentType === "full" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                 </div>
@@ -441,11 +439,10 @@ export default function RegisterPage() {
             {/* Installment Payment Option */}
             <button
               onClick={() => setPaymentType("installment")}
-              className={`p-6 rounded-lg border-2 transition-all text-left ${
-                paymentType === "installment"
+              className={`p-6 rounded-lg border-2 transition-all text-left ${paymentType === "installment"
                   ? "border-primary bg-primary/5"
                   : "border-border bg-card hover:border-primary/50"
-              }`}
+                }`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -453,9 +450,8 @@ export default function RegisterPage() {
                   <p className="text-sm text-muted-foreground mt-1">Pay monthly installments</p>
                 </div>
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    paymentType === "installment" ? "border-primary bg-primary" : "border-border"
-                  }`}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentType === "installment" ? "border-primary bg-primary" : "border-border"
+                    }`}
                 >
                   {paymentType === "installment" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                 </div>
@@ -477,8 +473,8 @@ export default function RegisterPage() {
           <div className="bg-card border border-border rounded-lg p-6 mb-8">
             <h2 className="text-lg font-semibold text-foreground mb-4">Payment Schedule</h2>
             <div className="space-y-3">
-             
-{/*              
+
+              {/*              
               {installmentDates.map((date, idx) => {
                 const amount =
                   idx === 2
@@ -504,16 +500,16 @@ export default function RegisterPage() {
                 )
             
             })} */}
-{paymentType === "full" ? (
-  // Show ONLY ONE item with total amount
-  <div>Full Payment - ₦{installments.total.toLocaleString()}</div>
-) : (
-  // Show ALL THREE installments
-  installmentDates.map((date, idx) => {
-    const amount = idx === 2 ? installments.final.toLocaleString() : installments.monthly.toLocaleString()
-    return <div>Installment {idx + 1} - ₦{amount}</div>
-  })
-)}
+              {paymentType === "full" ? (
+                // Show ONLY ONE item with total amount
+                <div>Full Payment - ₦{installments.total.toLocaleString()}</div>
+              ) : (
+                // Show ALL THREE installments
+                installmentDates.map((date, idx) => {
+                  const amount = idx === 2 ? installments.final.toLocaleString() : installments.monthly.toLocaleString()
+                  return <div>Installment {idx + 1} - ₦{amount}</div>
+                })
+              )}
 
 
             </div>
