@@ -23,7 +23,6 @@ export function Header() {
     { href: "#programs", label: "Programs" },
     { href: "#bootcamp", label: "Bootcamp" },
     { href: "#pricing", label: "Pricing" },
-    { href: "/register", label: "Register" },
   ]
 
   return (
@@ -53,14 +52,11 @@ export function Header() {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              Log in
-            </Button>
+          {/* CTA Button - Desktop */}
+          <div className="hidden md:block">
             <a href="/register">
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90 animate-pulse-glow">
-                Start Free Trial
+                Register
               </Button>
             </a>
           </div>
@@ -102,12 +98,9 @@ export function Header() {
                 {link.label}
               </a>
             ))}
-            <div className="flex flex-col gap-2 pt-4 border-t border-border">
-              <Button variant="ghost" className="justify-start">
-                Log in
-              </Button>
+            <div className="pt-4 border-t border-border">
               <a href="/register" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full bg-primary text-primary-foreground">Start Free Trial</Button>
+                <Button className="w-full bg-primary text-primary-foreground">Register</Button>
               </a>
             </div>
           </nav>

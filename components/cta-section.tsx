@@ -46,7 +46,7 @@ export function CTASection() {
           </div>
 
           {/* Trust Badges */}
-          <div className="mt-16 pt-8 border-t border-border">
+          {/* <div className="mt-16 pt-8 border-t border-border">
             <p className="text-sm text-muted-foreground mb-6">Trusted by engineers at</p>
             <div className="flex flex-wrap items-center justify-center gap-8 opacity-50">
               {["Google", "Amazon", "Meta", "Microsoft", "Netflix", "Stripe"].map((company) => (
@@ -55,7 +55,7 @@ export function CTASection() {
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

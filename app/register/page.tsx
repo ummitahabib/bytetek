@@ -4,19 +4,28 @@ import type React from "react"
 
 import { useState } from "react"
 import Image from "next/image"
-import { AlertCircle, Loader2, ArrowRight, Check, Copy, CheckCheck } from "lucide-react"
+import { AlertCircle, Loader2, ArrowRight, Check, Copy, CheckCheck, Tag } from "lucide-react"
 import { BYTETEK_PROGRAMS } from "@/lib/programs-data"
 
 type PaymentType = "full" | "installment"
 
-const calculateInstallments = (totalPrice: number) => {
-  const monthlyAmount = Math.floor(totalPrice / 3)
-  const finalAmount = totalPrice - monthlyAmount * 2
+const DISCOUNT_CODES = {
+  BT2026: 0.3, // 30% off
+  BT2026PLT: 0.5, // 50% off
+}
+
+const calculateInstallments = (totalPrice: number, discountPercent: number = 0) => {
+  const discountedPrice = Math.floor(totalPrice * (1 - discountPercent))
+  const monthlyAmount = Math.floor(discountedPrice / 3)
+  const finalAmount = discountedPrice - monthlyAmount * 2
 
   return {
     monthly: monthlyAmount,
     final: finalAmount,
-    total: totalPrice,
+    total: discountedPrice,
+    originalPrice: totalPrice,
+    discount: totalPrice - discountedPrice,
+    discountPercent: discountPercent * 100,
   }
 }
 
@@ -68,6 +77,12 @@ export default function RegisterPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const [paymentConfirmed, setPaymentConfirmed] = useState(false)
+  
+  // Discount code states
+  const [discountCode, setDiscountCode] = useState("")
+  const [appliedDiscount, setAppliedDiscount] = useState(0)
+  const [discountError, setDiscountError] = useState("")
+  const [isDiscountApplied, setIsDiscountApplied] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -76,7 +91,40 @@ export default function RegisterPage() {
     if (name === "courseOfStudy") {
       const selected = BYTETEK_PROGRAMS.flatMap((program) => program.courses).find((c) => c.id === value)
       setCourseDetails(selected)
+      // Reset discount when course changes
+      setDiscountCode("")
+      setAppliedDiscount(0)
+      setIsDiscountApplied(false)
+      setDiscountError("")
     }
+  }
+
+  const handleApplyDiscount = () => {
+    setDiscountError("")
+    
+    const code = discountCode.trim().toUpperCase()
+    
+    if (!code) {
+      setDiscountError("Please enter a discount code")
+      return
+    }
+
+    if (code in DISCOUNT_CODES) {
+      setAppliedDiscount(DISCOUNT_CODES[code as keyof typeof DISCOUNT_CODES])
+      setIsDiscountApplied(true)
+      setDiscountError("")
+    } else {
+      setDiscountError("Invalid discount code")
+      setAppliedDiscount(0)
+      setIsDiscountApplied(false)
+    }
+  }
+
+  const handleRemoveDiscount = () => {
+    setDiscountCode("")
+    setAppliedDiscount(0)
+    setIsDiscountApplied(false)
+    setDiscountError("")
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,7 +169,7 @@ export default function RegisterPage() {
       const n8nWebhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
 
       if (n8nWebhookUrl) {
-        const installments = calculateInstallments(courseDetails.price)
+        const installments = calculateInstallments(courseDetails.price, appliedDiscount)
         const paymentAmount = paymentType === "full" ? installments.total : installments.monthly
 
         await fetch(n8nWebhookUrl, {
@@ -138,7 +186,11 @@ export default function RegisterPage() {
             paymentStatus: "PENDING_VERIFICATION",
             paymentMethod: "Bank Transfer",
             amount: paymentAmount,
-            totalAmount: courseDetails.price,
+            totalAmount: installments.total,
+            originalPrice: courseDetails.price,
+            discountCode: isDiscountApplied ? discountCode.toUpperCase() : null,
+            discountPercent: installments.discountPercent,
+            discountAmount: installments.discount,
             paymentType: paymentType,
             timestamp: new Date().toISOString(),
           }),
@@ -197,6 +249,10 @@ export default function RegisterPage() {
                   trainingFormat: "",
                   additionalDetails: "",
                 })
+                setDiscountCode("")
+                setAppliedDiscount(0)
+                setIsDiscountApplied(false)
+                setDiscountError("")
               }}
               className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
             >
@@ -211,7 +267,7 @@ export default function RegisterPage() {
 
   // Payment details screen
   if (step === "payment" && courseDetails) {
-    const installments = calculateInstallments(courseDetails.price)
+    const installments = calculateInstallments(courseDetails.price, appliedDiscount)
     const paymentAmount = paymentType === "full" ? installments.total : installments.monthly
 
     return (
@@ -232,6 +288,24 @@ export default function RegisterPage() {
             <p className="text-sm text-muted-foreground">
               {paymentType === "full" ? "Full Payment" : "First Installment (1/3)"}
             </p>
+            
+            {/* Show discount applied */}
+            {isDiscountApplied && installments.discount > 0 && (
+              <div className="mt-4 pt-4 border-t border-primary/20">
+                <div className="flex items-center justify-center gap-2 text-accent mb-2">
+                  <Tag className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Discount Applied: {installments.discountPercent}% OFF</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <span className="line-through">₦{installments.originalPrice.toLocaleString()}</span>
+                  <span className="mx-2">→</span>
+                  <span className="text-accent font-semibold">₦{installments.total.toLocaleString()}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  You save ₦{installments.discount.toLocaleString()}!
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Bank Account Details */}
@@ -319,7 +393,9 @@ export default function RegisterPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Name:</span>
-                <span className="text-foreground font-medium">{formData.firstName} {formData.lastName}</span>
+                <span className="text-foreground font-medium">
+                  {formData.firstName} {formData.lastName}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Email:</span>
@@ -339,6 +415,12 @@ export default function RegisterPage() {
                   {paymentType === "full" ? "Full Payment" : "3-Month Installment"}
                 </span>
               </div>
+              {isDiscountApplied && (
+                <div className="flex justify-between pt-2 border-t border-border">
+                  <span className="text-muted-foreground">Discount Code:</span>
+                  <span className="text-accent font-semibold">{discountCode.toUpperCase()} ({installments.discountPercent}% OFF)</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -396,7 +478,7 @@ export default function RegisterPage() {
 
   // Payment type selection step
   if (step === "payment-type" && courseDetails) {
-    const installments = calculateInstallments(courseDetails.price)
+    const installments = calculateInstallments(courseDetails.price, appliedDiscount)
     const installmentDates = getInstallmentDates()
 
     return (
@@ -410,12 +492,84 @@ export default function RegisterPage() {
             <p className="text-muted-foreground">Select how you'd like to pay for your course</p>
           </div>
 
+          {/* Discount Code Section */}
+          <div className="bg-card border border-border rounded-lg p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Tag className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-semibold text-foreground">Have a Discount Code?</h2>
+            </div>
+            
+            {!isDiscountApplied ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={discountCode}
+                  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                  placeholder="Enter discount code"
+                  className="flex-1 bg-background border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all uppercase"
+                />
+                <button
+                  onClick={handleApplyDiscount}
+                  className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
+                >
+                  Apply
+                </button>
+              </div>
+            ) : (
+              <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-accent" />
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      {discountCode} - {installments.discountPercent}% OFF Applied!
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      You're saving ₦{installments.discount.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleRemoveDiscount}
+                  className="text-sm text-destructive hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+            
+            {discountError && (
+              <p className="text-sm text-destructive mt-2 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {discountError}
+              </p>
+            )}
+          </div>
+
+          {/* Price Summary */}
+          {isDiscountApplied && installments.discount > 0 && (
+            <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-muted-foreground">Original Price:</span>
+                <span className="text-foreground line-through">₦{installments.originalPrice.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-muted-foreground">Discount ({installments.discountPercent}%):</span>
+                <span className="text-accent font-semibold">-₦{installments.discount.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-border">
+                <span className="font-semibold text-foreground">New Price:</span>
+                <span className="text-xl font-bold text-accent">₦{installments.total.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {/* Full Payment Option */}
             <button
               onClick={() => setPaymentType("full")}
-              className={`p-6 rounded-lg border-2 transition-all text-left ${paymentType === "full" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
-                }`}
+              className={`p-6 rounded-lg border-2 transition-all text-left ${
+                paymentType === "full" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
+              }`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -423,14 +577,20 @@ export default function RegisterPage() {
                   <p className="text-sm text-muted-foreground mt-1">Pay in one installment</p>
                 </div>
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentType === "full" ? "border-primary bg-primary" : "border-border"
-                    }`}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    paymentType === "full" ? "border-primary bg-primary" : "border-border"
+                  }`}
                 >
                   {paymentType === "full" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                 </div>
               </div>
               <div className="bg-accent/5 rounded p-3 mb-4">
                 <p className="text-sm text-muted-foreground">Total Amount</p>
+                {isDiscountApplied && installments.discount > 0 && (
+                  <p className="text-sm text-muted-foreground line-through">
+                    ₦{installments.originalPrice.toLocaleString()}
+                  </p>
+                )}
                 <p className="text-2xl font-bold text-foreground">₦{installments.total.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground mt-2">Due before Jan 29, 2025</p>
               </div>
@@ -439,10 +599,11 @@ export default function RegisterPage() {
             {/* Installment Payment Option */}
             <button
               onClick={() => setPaymentType("installment")}
-              className={`p-6 rounded-lg border-2 transition-all text-left ${paymentType === "installment"
+              className={`p-6 rounded-lg border-2 transition-all text-left ${
+                paymentType === "installment"
                   ? "border-primary bg-primary/5"
                   : "border-border bg-card hover:border-primary/50"
-                }`}
+              }`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -450,8 +611,9 @@ export default function RegisterPage() {
                   <p className="text-sm text-muted-foreground mt-1">Pay monthly installments</p>
                 </div>
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentType === "installment" ? "border-primary bg-primary" : "border-border"
-                    }`}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    paymentType === "installment" ? "border-primary bg-primary" : "border-border"
+                  }`}
                 >
                   {paymentType === "installment" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                 </div>
@@ -473,45 +635,28 @@ export default function RegisterPage() {
           <div className="bg-card border border-border rounded-lg p-6 mb-8">
             <h2 className="text-lg font-semibold text-foreground mb-4">Payment Schedule</h2>
             <div className="space-y-3">
-
-              {/*              
-              {installmentDates.map((date, idx) => {
-                const amount =
-                  idx === 2
-                    ? paymentType === "full"
-                      ? 0
-                      : calculateInstallments(courseDetails.price).final
-                    : paymentType === "full" && idx > 0
-                      ? 0
-                      : calculateInstallments(courseDetails.price).monthly
-
-                if (paymentType === "full" && idx > 0) return null
-
-                return (
-                  <div key={date.installment} className="flex items-center justify-between p-3 bg-accent/5 rounded">
-                    <div>
-                      <p className="font-medium text-foreground">
-                        {paymentType === "full" ? "Full Payment" : `Installment ${date.installment}`}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{date.label}</p>
-                    </div>
-                    <p className="text-lg font-bold text-foreground">₦{amount.toLocaleString()}</p>
-                  </div>
-                )
-            
-            })} */}
               {paymentType === "full" ? (
-                // Show ONLY ONE item with total amount
-                <div>Full Payment - ₦{installments.total.toLocaleString()}</div>
+                <div className="flex items-center justify-between p-4 bg-accent/5 rounded-lg">
+                  <div>
+                    <p className="font-semibold text-foreground">Full Payment</p>
+                    <p className="text-xs text-muted-foreground mt-1">Due before Jan 29, 2025</p>
+                  </div>
+                  <p className="text-xl font-bold text-foreground">₦{installments.total.toLocaleString()}</p>
+                </div>
               ) : (
-                // Show ALL THREE installments
                 installmentDates.map((date, idx) => {
-                  const amount = idx === 2 ? installments.final.toLocaleString() : installments.monthly.toLocaleString()
-                  return <div>Installment {idx + 1} - ₦{amount}</div>
+                  const amount = idx === 2 ? installments.final : installments.monthly
+                  return (
+                    <div key={idx} className="flex items-center justify-between p-4 bg-accent/5 rounded-lg">
+                      <div>
+                        <p className="font-semibold text-foreground">Installment {idx + 1}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{date.label}</p>
+                      </div>
+                      <p className="text-lg font-bold text-foreground">₦{amount.toLocaleString()}</p>
+                    </div>
+                  )
                 })
               )}
-
-
             </div>
           </div>
 

@@ -18,9 +18,27 @@ const technologies = [
   { name: "Git", category: "Tools" },
   { name: "Linux", category: "Systems" },
   { name: "Terraform", category: "DevOps" },
+  { name: "AI for Creatives", category: "AI/ML" },
+  { name: "Flutter", category: "Mobile" },
+  { name: "Dart", category: "Language" },
+  { name: "React Native", category: "Mobile" },
+  { name: "Animation", category: "Creative" },
+  { name: "Lego Robotics", category: "Robotics" },
+  { name: "UI/UX Design", category: "Design" },
+  { name: "Figma", category: "Design" },
+  { name: "Graphic Design", category: "Creative" },
+  { name: "Adobe Suite", category: "Creative" },
+  { name: "Video Editing", category: "Creative" },
+  { name: "Premiere Pro", category: "Creative" },
+  { name: "After Effects", category: "Creative" },
+  { name: "Blender", category: "3D/Animation" },
 ]
 
 export function TechStackSection() {
+  // Split technologies into two rows for better distribution
+  const row1Technologies = technologies.slice(0, Math.ceil(technologies.length / 2))
+  const row2Technologies = technologies.slice(Math.ceil(technologies.length / 2))
+
   return (
     <section className="py-24 bg-card/30 overflow-hidden">
       <div className="container mx-auto px-4">
@@ -31,14 +49,14 @@ export function TechStackSection() {
             Master In-Demand <span className="text-primary text-glow">Technologies</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Learn the technologies that top companies are using today.
+            Learn the technologies and creative tools that top companies are using today.
           </p>
         </div>
 
         {/* Scrolling Tech Logos - Row 1 */}
         <div className="relative mb-8">
           <div className="flex animate-scroll">
-            {[...technologies, ...technologies].map((tech, index) => (
+            {[...row1Technologies, ...row1Technologies].map((tech, index) => (
               <TechCard key={`${tech.name}-${index}`} tech={tech} />
             ))}
           </div>
@@ -47,7 +65,7 @@ export function TechStackSection() {
         {/* Scrolling Tech Logos - Row 2 (Reverse) */}
         <div className="relative">
           <div className="flex animate-scroll-reverse">
-            {[...technologies.slice().reverse(), ...technologies.slice().reverse()].map((tech, index) => (
+            {[...row2Technologies, ...row2Technologies].map((tech, index) => (
               <TechCard key={`${tech.name}-rev-${index}`} tech={tech} />
             ))}
           </div>
@@ -64,10 +82,10 @@ export function TechStackSection() {
           100% { transform: translateX(0); }
         }
         .animate-scroll {
-          animation: scroll 30s linear infinite;
+          animation: scroll 40s linear infinite;
         }
         .animate-scroll-reverse {
-          animation: scroll-reverse 30s linear infinite;
+          animation: scroll-reverse 40s linear infinite;
         }
       `}</style>
     </section>
@@ -82,7 +100,7 @@ function TechCard({ tech }: { tech: { name: string; category: string } }) {
         "bg-card border border-border",
         "hover:border-primary/50 hover:bg-card/80",
         "transition-all duration-300 cursor-pointer group",
-        "min-w-[160px]",
+        "min-w-[180px]",
       )}
     >
       <div className="text-center">

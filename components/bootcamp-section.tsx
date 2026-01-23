@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { Calendar, Users, TrendingUp, MapPin, Phone, Mail } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { RegisterButton } from "@/components/register-button"
 import { CLASS_INFO } from "@/lib/programs-data"
 
 export function BootcampSection() {
@@ -147,22 +147,11 @@ export function BootcampSection() {
               style={{ width: "60%" }}
             />
           </div>
-          <RegisterButton
-            size="lg"
-            className="animate-pulse-glow"
-            program={{
-              id: "fullstack-bootcamp",
-              name: "Full-Stack Development Bootcamp",
-              type: "bootcamp",
-              price: 450000,
-              duration: "16 weeks",
-              description: "Intensive program covering React, Node.js, PostgreSQL, and deployment",
-              startDates: ["2026-02-01", "2026-03-15", "2026-05-01"],
-            }}
-            showParticles
-          >
-            Reserve Your Spot
-          </RegisterButton>
+          <a href="/register">
+            <Button size="lg" className="animate-pulse-glow">
+              Reserve Your Spot
+            </Button>
+          </a>
         </div>
 
         {/* Location & Contact Highlight */}
@@ -193,21 +182,11 @@ export function BootcampSection() {
 
           {/* CTA */}
           <div className="text-center">
-            <RegisterButton
-              size="lg"
-              program={{
-                id: "bytetek-programs",
-                name: "ByteTek Training Programs",
-                type: "bootcamp",
-                price: 65000,
-                duration: "3 Months",
-                description: "Intensive tech training for kids, teens, and professionals",
-                startDates: ["2026-02-01", "2026-03-15", "2026-05-01"],
-              }}
-              className="px-8 py-3 font-semibold"
-            >
-              Start Your Journey
-            </RegisterButton>
+            <a href="/register">
+              <Button size="lg" className="px-8 py-3 font-semibold">
+                Start Your Journey
+              </Button>
+            </a>
           </div>
         </div>
       </div>

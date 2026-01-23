@@ -48,8 +48,8 @@ export function ProgramsSection() {
                 className={cn(
                   "p-4 rounded-lg transition-all duration-300 text-left border-2",
                   activeProgramIndex === index
-                    ? "bg-white text-black border-white"
-                    : "bg-gray-900 text-white border-gray-700 hover:border-white",
+                    ? "bg-gray-800 text-white border-gray-600"
+                    : "bg-gray-900 text-white border-gray-700 hover:border-gray-600",
                 )}
               >
                 <div className="font-bold text-lg">{program.category}</div>
@@ -78,8 +78,8 @@ export function ProgramsSection() {
                   className={cn(
                     "p-4 rounded-lg border-2 transition-all duration-300 text-left",
                     activeCourseIndex === index
-                      ? "bg-white text-black border-white"
-                      : "bg-gray-900 text-white border-gray-700 hover:border-gray-500",
+                      ? "bg-gray-800 text-white border-gray-600"
+                      : "bg-gray-900 text-white border-gray-700 hover:border-gray-600",
                   )}
                 >
                   <div className="font-semibold">{course.name}</div>
@@ -90,32 +90,23 @@ export function ProgramsSection() {
           </div>
 
           {/* Selected Course Details */}
-          <div className="bg-white text-black rounded-lg p-8">
+          <div className="bg-gray-800 border border-gray-700 text-white rounded-lg p-8">
             <h4 className="text-2xl font-bold mb-2">{activeCourse.name}</h4>
-            <p className="text-gray-700 mb-6">{activeCourse.description}</p>
+            <p className="text-gray-300 mb-6">{activeCourse.description}</p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-300">
+            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-600">
               <div>
-                <div className="text-sm text-gray-600">Regular Price</div>
+                <div className="text-sm text-gray-400">Regular Price</div>
                 <div className="text-3xl font-bold">{formatPrice(activeCourse.price)}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">Early Bird (30% OFF)</div>
-                <div className="text-3xl font-bold text-black">{formatPrice(discountedPrice)}</div>
+                <div className="text-sm text-gray-400">Early Bird (30% OFF)</div>
+                <div className="text-3xl font-bold text-green-400">{formatPrice(discountedPrice)}</div>
               </div>
             </div>
 
             <RegisterButton
-              program={{
-                id: activeCourse.id,
-                name: `${activeCourse.name} (${activeProgram.ageGroup})`,
-                type: "course",
-                price: activeCourse.price,
-                duration: PROGRAM_INFO.duration,
-                description: activeCourse.description,
-                startDates: ["2026-02-01", "2026-03-15", "2026-05-01"],
-              }}
-              className="w-full py-3 font-semibold bg-black text-white hover:bg-gray-800"
+              className="w-full py-3 font-semibold bg-white text-black hover:bg-gray-200"
             >
               Enroll Now
             </RegisterButton>
